@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     TextView version;
 
-    InetSocketAddress inetSocketAddress;
+    InetSocketAddress inetSocketAddress ;
 
     private final static String TAG = "MainActivity";
 
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         isShowCost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isShowCost.isChecked()) {
+                if (!isShowCost.isChecked()){
                     ipText.setText("");
                 }
             }
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void readTts() {
+    private void readTts(){
         //获取文件在内存卡中files目录下的路径
         File file = getFilesDir();
         String filename = file.getAbsolutePath() + File.separator + "tts.txt";
@@ -159,11 +159,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             BufferedReader br = new BufferedReader(fileReader);
             String str = "";
             ArrayList<String> list = new ArrayList<String>();
-            while ((str = br.readLine()) != null) {
+            while ((str = br.readLine()) != null){
                 list.add(str);
             }
             Log.d(TAG, "list: " + JSONObject.toJSONString(list));
-            if (list.size() > 0) {
+            if (list.size() > 0){
                 tts = new String[list.size()];
                 list.toArray(tts);
             }
@@ -200,10 +200,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return list;
     }
 
-    private void createFile() {
+    private void createFile(){
         //获取文件在内存卡中files目录下的路径
         File file = getFilesDir();
-        execCmdsforResult("chmod -R 777 " + file.getAbsolutePath());
+        execCmdsforResult("chmod -R 777 " + file.getAbsolutePath() );
         String filename = file.getAbsolutePath() + File.separator + "cost.log";
         String filenameLog = file.getAbsolutePath() + File.separator + "screen.log";
         log.info("logfile name: " + filename);
@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startDialog();
                 }
                 showTip(msg);
-            } catch (Exception e) {
+            } catch (Exception e){
                 Log.e(TAG, e.toString());
             }
         }
@@ -331,14 +331,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (socketClient != null && isAuto.isChecked()) {
                 socketClient.nuiDialogStart(null);
             }
-            count++;
+            count ++;
             isFirst = true;
             currentSum = new Date().getTime();
         }
 
-        private void dialogFinished() {
+        private void dialogFinished(){
             StringBuilder stringBuilder = new StringBuilder();
-            for (Map.Entry<String, String> item : mapTime.entrySet()) {
+            for(Map.Entry<String, String> item: mapTime.entrySet()){
                 stringBuilder.append(String.format("%s: %s    ", item.getKey(), item.getValue()));
             }
             Message msg = new Message();
@@ -348,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             msg.setData(data);
             handler.sendMessage(msg);
         }
+
 
 
         @Override
@@ -390,13 +391,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Bundle data = msg.getData();
-            if (data.containsKey("name")) {
+            if (data.containsKey("name")){
                 String val = data.getString("value");
                 String text = "每轮对话平均耗时：" + val + "\r\n";
                 if (isShowCost.isChecked()) {
                     ipText.setText(text);
                 }
-                if (outputStream != null && saveLogCheckBox.isChecked()) {
+                if (outputStream != null && saveLogCheckBox.isChecked()){
                     try {
                         outputStream.write(text.getBytes("utf-8"));
                         outputStream.flush();
@@ -407,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
             String val = data.getString("value");
-            if (outputStreamLog != null && saveLogCheckBox.isChecked()) {
+            if (outputStreamLog != null && saveLogCheckBox.isChecked()){
                 try {
                     outputStreamLog.write((val + "\n").getBytes("utf-8"));
                     outputStreamLog.flush();
@@ -424,13 +425,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 int offset = resultText.getLineCount() * resultText.getLineHeight();
                 resultText.scrollTo(0, offset - resultText.getHeight() + resultText.getLineHeight());
             }
-            if (stringBuffer.length() > 5000) {
+            if (stringBuffer.length() > 5000){
                 stringBuffer.setLength(3000);
             }
         }
     };
 
-    private void initSocketClient() {
+    private void initSocketClient(){
         String host = "";
         host = ipText.getText().toString().trim();
         if (host == null || host.isEmpty()) {
@@ -452,14 +453,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             socketClient = SocketClient.getInstance();
         }
     }
-
     Runnable networkTask = new Runnable() {
         @Override
         public void run() {
             // TODO
             // 在这里进行 http request.网络请求相关操作
             initSocketClient();
-            if (socketClient.start(inetSocketAddress, iListener, MainActivity.this, 100000) < 0) {
+            if (socketClient.start(inetSocketAddress, iListener, MainActivity.this,100000) < 0) {
                 showTip("连接超时");
             } else {
                 showTip("连接建立中...");
@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bundle data = new Bundle();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String time = simpleDateFormat.format(new Date());
-        data.putString("value", time + ":   " + str);
+        data.putString("value",time + ":   " + str);
         msg.setData(data);
         handler.sendMessage(msg);
     }
@@ -509,18 +509,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onDialogStop(View view) {
-//        if (socketClient != null) {
-//            socketClient.nuiDialogStop();
-////            dialogStopBtn.setEnabled(false);
-////            dialogStartBtn.setEnabled(true);
-//            Map<String, Object> map = new HashMap<String, Object>();
-//            map.put("price", 2);
-////            socketClient.nuiEventTrackerTrack(JSONObject.toJSONString(map));
-//        }
         if (socketClient != null) {
-            socketClient.nuiTtsPlay("1", "1234567890", tts[Util.getRandomWithN(tts.length)]);
+            socketClient.nuiDialogStop();
+//            dialogStopBtn.setEnabled(false);
+//            dialogStartBtn.setEnabled(true);
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("price", 2);
+//            socketClient.nuiEventTrackerTrack(JSONObject.toJSONString(map));
         }
-
     }
 
     public void onNuiInitalize() {
