@@ -1,1 +1,4 @@
-include ':app', ':processors', ':annotations', ':greendao'
+//include ':app',
+//        ':processors',
+//        ':annotations',
+include ':greendao'

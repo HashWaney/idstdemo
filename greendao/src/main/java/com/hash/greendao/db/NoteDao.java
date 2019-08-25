@@ -28,10 +28,12 @@ public class NoteDao extends AbstractDao<Note, Long> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Text = new Property(1, String.class, "text", false, "TEXT");
-        public final static Property Comment = new Property(2, String.class, "comment", false, "COMMENT");
-        public final static Property Date = new Property(3, java.util.Date.class, "date", false, "DATE");
-        public final static Property Type = new Property(4, String.class, "type", false, "TYPE");
+        public final static Property PersonId = new Property(1, String.class, "personId", false, "PERSON_ID");
+        public final static Property Text = new Property(2, String.class, "text", false, "TEXT");
+        public final static Property Comment = new Property(3, String.class, "comment", false, "COMMENT");
+        public final static Property Date = new Property(4, java.util.Date.class, "date", false, "DATE");
+        public final static Property PersonName = new Property(5, String.class, "personName", false, "PERSON_NAME");
+        public final static Property Type = new Property(6, String.class, "type", false, "TYPE");
     }
 
     private final NoteTypeConvert typeConverter = new NoteTypeConvert();
@@ -49,10 +51,12 @@ public class NoteDao extends AbstractDao<Note, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"NOTE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"TEXT\" TEXT," + // 1: text
-                "\"COMMENT\" TEXT," + // 2: comment
-                "\"DATE\" INTEGER," + // 3: date
-                "\"TYPE\" TEXT);"); // 4: type
+                "\"PERSON_ID\" TEXT," + // 1: personId
+                "\"TEXT\" TEXT," + // 2: text
+                "\"COMMENT\" TEXT," + // 3: comment
+                "\"DATE\" INTEGER," + // 4: date
+                "\"PERSON_NAME\" TEXT," + // 5: personName
+                "\"TYPE\" TEXT);"); // 6: type
         // Add Indexes
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_NOTE_TEXT_DATE_DESC ON \"NOTE\"" +
                 " (\"TEXT\" ASC,\"DATE\" DESC);");
@@ -73,24 +77,34 @@ public class NoteDao extends AbstractDao<Note, Long> {
             stmt.bindLong(1, id);
         }
  
+        String personId = entity.getPersonId();
+        if (personId != null) {
+            stmt.bindString(2, personId);
+        }
+ 
         String text = entity.getText();
         if (text != null) {
-            stmt.bindString(2, text);
+            stmt.bindString(3, text);
         }
  
         String comment = entity.getComment();
         if (comment != null) {
-            stmt.bindString(3, comment);
+            stmt.bindString(4, comment);
         }
  
         java.util.Date date = entity.getDate();
         if (date != null) {
-            stmt.bindLong(4, date.getTime());
+            stmt.bindLong(5, date.getTime());
+        }
+ 
+        String personName = entity.getPersonName();
+        if (personName != null) {
+            stmt.bindString(6, personName);
         }
  
         NoteType type = entity.getType();
         if (type != null) {
-            stmt.bindString(5, typeConverter.convertToDatabaseValue(type));
+            stmt.bindString(7, typeConverter.convertToDatabaseValue(type));
         }
     }
 
@@ -103,24 +117,34 @@ public class NoteDao extends AbstractDao<Note, Long> {
             stmt.bindLong(1, id);
         }
  
+        String personId = entity.getPersonId();
+        if (personId != null) {
+            stmt.bindString(2, personId);
+        }
+ 
         String text = entity.getText();
         if (text != null) {
-            stmt.bindString(2, text);
+            stmt.bindString(3, text);
         }
  
         String comment = entity.getComment();
         if (comment != null) {
-            stmt.bindString(3, comment);
+            stmt.bindString(4, comment);
         }
  
         java.util.Date date = entity.getDate();
         if (date != null) {
-            stmt.bindLong(4, date.getTime());
+            stmt.bindLong(5, date.getTime());
+        }
+ 
+        String personName = entity.getPersonName();
+        if (personName != null) {
+            stmt.bindString(6, personName);
         }
  
         NoteType type = entity.getType();
         if (type != null) {
-            stmt.bindString(5, typeConverter.convertToDatabaseValue(type));
+            stmt.bindString(7, typeConverter.convertToDatabaseValue(type));
         }
     }
 
@@ -133,10 +157,12 @@ public class NoteDao extends AbstractDao<Note, Long> {
     public Note readEntity(Cursor cursor, int offset) {
         Note entity = new Note( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // text
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // comment
-            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // date
-            cursor.isNull(offset + 4) ? null : typeConverter.convertToEntityProperty(cursor.getString(offset + 4)) // type
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // personId
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // text
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // comment
+            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // date
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // personName
+            cursor.isNull(offset + 6) ? null : typeConverter.convertToEntityProperty(cursor.getString(offset + 6)) // type
         );
         return entity;
     }
@@ -144,10 +170,12 @@ public class NoteDao extends AbstractDao<Note, Long> {
     @Override
     public void readEntity(Cursor cursor, Note entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setText(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setComment(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setDate(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
-        entity.setType(cursor.isNull(offset + 4) ? null : typeConverter.convertToEntityProperty(cursor.getString(offset + 4)));
+        entity.setPersonId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setText(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setComment(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setDate(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
+        entity.setPersonName(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setType(cursor.isNull(offset + 6) ? null : typeConverter.convertToEntityProperty(cursor.getString(offset + 6)));
      }
     
     @Override

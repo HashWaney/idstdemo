@@ -13,12 +13,20 @@ import com.hash.greendao.db.DaoSession;
 public class GreenDaoApp extends Application {
 
     private DaoSession daoSession;
+    private static GreenDaoApp sInstance;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        sInstance =this;
         initGreenDao();
     }
+
+    public static GreenDaoApp getInstance() {
+       return sInstance;
+
+    }
+
 
     /**
      * 初始化GreenDao
